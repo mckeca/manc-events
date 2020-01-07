@@ -101,3 +101,9 @@ header {
   background-color: antiquewhite;
   border: 2px solid grey;
 }
+
+.leaflet-container {
+  height: 400px;
+  width: 700px;
+  margin-bottom: 20px;
+}
