@@ -4,11 +4,12 @@ import util from './utils/utils';
 import Button from './Button';
 import Search from './Search';
 import Map from './Map';
+import Loading from './Loading';
 
 class List extends Component {
   state = {
     events: [],
-    apiKey: 'MPEjJbqNGhQLZI0ouzQ1GCmBLYxGHsqB'
+    isLoading: true
   };
 
   componentDidMount = () => {
@@ -19,7 +20,10 @@ class List extends Component {
         return response.json();
       })
       .then(events => {
-        this.setState({ events: util(events._embedded.events) });
+        this.setState({
+          events: util(events._embedded.events),
+          isLoading: false
+        });
       });
   };
 
@@ -30,11 +34,18 @@ class List extends Component {
         <section id="button-panel">
           <Button fetchEvents={this.fetchEvents} />
         </section>
-        <Search handleSearch={this.handleSearch} />
+        <Search
+          handleSearch={this.handleSearch}
+          startLoading={this.startLoading}
+        />
         <ul id="list-ul">
-          {this.state.events.map(event => {
-            return <EventCard event={event} key={event.id} />;
-          })}
+          {!this.state.isLoading ? (
+            this.state.events.map(event => {
+              return <EventCard event={event} key={event.id} />;
+            })
+          ) : (
+            <Loading />
+          )}
         </ul>
       </div>
     );
@@ -51,13 +62,22 @@ class List extends Component {
         return response.json();
       })
       .then(events => {
-        if (!events.page.totalElements) this.setState({ events: [] });
-        else this.setState({ events: util(events._embedded.events) });
+        if (!events.page.totalElements)
+          this.setState({ events: [], isLoading: false });
+        else
+          this.setState({
+            events: util(events._embedded.events),
+            isLoading: false
+          });
       });
   };
 
   handleSearch = term => {
     this.fetchEvents(term, '');
+  };
+
+  startLoading = () => {
+    this.setState({ isLoading: true });
   };
 }
 

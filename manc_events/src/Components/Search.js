@@ -9,6 +9,7 @@ class Search extends Component {
       <form
         id="search-form"
         onSubmit={event => {
+          this.props.startLoading();
           this.props.handleSearch(this.state.searchText);
           event.preventDefault();
         }}
